@@ -26,13 +26,14 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
 int timestamp;
-
 float temperature;
 float humidity;
 float pressure;
 
 unsigned long sendDataPrevMillis = 0;
 unsigned long timerDelay = 180000;
+
+StaticJsonDocument<200> doc;
 
 void initWiFi() {
   WiFi.begin(wifi_ssid, wifi_password);
@@ -74,8 +75,6 @@ void setup() {
   config.max_token_generation_retry = 5;
   Firebase.begin(&config, &auth);
 
-  // Getting the user UID might take a few seconds
-  // Serial.println("Getting User UID");
   while ((auth.token.uid) == "") {
     // Serial.print('.');
     delay(1000);
@@ -89,41 +88,25 @@ void setup() {
 }
 
 void loop() {
+  deserializeJson(doc, Serial); // get JSON from Serial - from Atmega
 
   if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)) {
     sendDataPrevMillis = millis();
 
     timestamp = getTime();
-    // Serial.print("time: ");
-    // Serial.println(timestamp);
-
     parentPath = databasePath + "/" + String(timestamp);
 
-    // ReceiveDataFromSerial();
-
-    StaticJsonDocument<200> doc;
-    deserializeJson(doc, Serial);
-
     if (doc["temperature"]) {
-      // Serial.printf(doc["temperature"]);
       json.set(tempPath.c_str(), String(doc["temperature"]));
       json.set(humPath.c_str(), String(doc["humidity"]));
     } else {
       json.set(tempPath.c_str(), String(24));
       json.set(humPath.c_str(), String(80));
-      json.set(presPath.c_str(), String(70));
+      // json.set(presPath.c_str(), String(70));
     }
 
     json.set(timePath, String(timestamp));
     Firebase.RTDB.setJSON(&fbdo, parentPath.c_str(), &json);
     // Serial.printf("Set json... %s\n", Firebase.RTDB.setJSON(&fbdo, parentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
   }
-}
-
-void ReceiveDataFromSerial() {
-  StaticJsonDocument<200> doc;
-  deserializeJson(doc, Serial);
-
-  // Serial.println((char)doc["temperature"]);
-  return;
 }

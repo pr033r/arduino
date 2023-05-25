@@ -21,22 +21,7 @@ void loop() {
     Serial.println("Error with reading DHT sensor!");
   } else {
     SendDataToSerial(temperature, humidity);
-    // Serial.print("Temperature: ");
-    // Serial.print(temperature);
-    // Serial.print(" C, ");
-    // Serial.print("Humidity: ");
-    // Serial.print(humidity);
-    // Serial.println("  %");
   }
-
-
-  // if (esp8266.available()) {
-  //   esp8266.write(temperature);
-  //   Serial.println("Sending information to ESP8266/");
-  //   delay(100);
-  // }
-
-  delay(2000);
 }
 
 void SendDataToSerial(float temperature, float humidity) {
