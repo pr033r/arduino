@@ -1,5 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Chart, registerables} from 'chart.js';
+import {ReadingsDataInterface} from "../../services/readings-data.interface";
+import {Subscription} from "rxjs";
+import {DataAccessService} from "../../services/data-access.service";
+import {MeasurementDataDataInterface} from "../../services/measurement-data-data.interface";
 
 Chart.register(...registerables);
 
@@ -8,40 +12,88 @@ Chart.register(...registerables);
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements OnInit {
-  public temperatureChart: any;
+export class LineChartComponent implements OnInit, OnDestroy {
+  temperatureChart: any;
+  private dataSubscription!: Subscription;
+  numberOfValuesToShow = 24;
+  measurementData: Array<MeasurementDataDataInterface> = [];
+  lastElements: Array<MeasurementDataDataInterface> = []
 
-  ngOnInit() {
-    this.createTemperatureChart();
+  constructor(private dataAccess: DataAccessService) {
   }
 
-  createTemperatureChart() {
+  ngOnInit() {
+    this.dataSubscription = this.dataAccess.fetchAll().subscribe(data => {
 
-    this.temperatureChart = new Chart("TemperatureChart", {
-      type: 'line', //this denotes tha type of chart
+      this.extractFirebaseData(data);
+      this.createTemperatureChart();
+    })
+  }
 
-      data: {// values on X-Axis
-        labels: ['2022-05-10', '2022-05-11', '2022-05-12', '2022-05-13',
-          '2022-05-14', '2022-05-15', '2022-05-16', '2022-05-17',],
+  ngOnDestroy() {
+    this.dataSubscription.unsubscribe();
+  }
+
+  private createTemperatureChart() {
+    this.lastElements = this.measurementData.slice(-this.numberOfValuesToShow);
+    const dateLabels = this.lastElements.map(x => x.timestamp);
+    const humidity = this.lastElements.map(x => x.humidity);
+    const temperature = this.lastElements.map(x => x.temperature);
+
+    this.temperatureChart = new Chart('TemperatureChart', {
+      type: 'line',
+      data: {
+        labels: dateLabels,
         datasets: [
           {
-            label: "Sales",
-            data: ['467', '576', '572', '79', '92',
-              '574', '573', '576'],
-            backgroundColor: 'blue'
+            label: "Teplota",
+            data: temperature,
+            borderColor: 'lightBlue',
+            backgroundColor: 'SteelBlue',
+            pointStyle: 'circle',
+            pointRadius: 10,
+            pointHoverRadius: 15
           },
           {
-            label: "Profit",
-            data: ['542', '542', '536', '327', '17',
-              '0.00', '538', '541'],
-            backgroundColor: 'limegreen'
+            label: "Vlhkost",
+            data: humidity,
+            borderColor: 'LightCoral',
+            backgroundColor: 'IndianRed',
+            pointStyle: 'circle',
+            pointRadius: 10,
+            pointHoverRadius: 15
           }
         ]
       },
       options: {
-        aspectRatio: 2.5
+        aspectRatio: 4.5,
+        responsive: true,
       }
-
     });
+  }
+
+  private extractFirebaseData(firebaseData: Array<ReadingsDataInterface>) {
+    if (firebaseData[0].readings) {
+      for (let key in firebaseData[0].readings) {
+        if (!firebaseData[0].readings.hasOwnProperty(key)) continue;
+
+        const obj = firebaseData[0].readings[key];
+        this.measurementData.push({
+          humidity: obj.humidity,
+          temperature: obj.temperature,
+          pressure: obj.pressure,
+          timestamp: this.convertTimestampToDate(obj.timestamp)
+        });
+      }
+    }
+  }
+
+  private convertTimestampToDate(timestamp: string) {
+    const date = new Date(parseInt(timestamp) * 1000);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${day}.${month}. [${hours}:${minutes}]`;
   }
 }

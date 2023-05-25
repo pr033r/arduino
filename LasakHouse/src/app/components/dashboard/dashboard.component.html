@@ -16,12 +16,14 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <ng-container *ngIf="card.id === 1">
+          <ng-container *ngIf="card.id === 1; else defaultView">
             <div>
               <app-line-chart></app-line-chart>
             </div>
           </ng-container>
-          <div>Obsah pro další dlaždici...</div>
+          <ng-template #defaultView>
+            <div>Obsah pro další dlaždici...</div>
+          </ng-template>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

@@ -1,10 +1,7 @@
+import {MeasurementDataDataInterface} from "./measurement-data-data.interface";
+
 export interface ReadingsDataInterface {
   "readings": {
-    [key: string]: {
-      humidity: number,
-      pressure: number,
-      temperature: number,
-      timestamp: string
-    }
+    [key: string]: MeasurementDataDataInterface
   }
 }
