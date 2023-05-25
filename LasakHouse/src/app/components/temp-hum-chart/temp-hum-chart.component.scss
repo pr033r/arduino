@@ -1,0 +1,18 @@
+.measurementValues {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 25px;
+  text-align: left;
+}
+
+.temperature {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.temperature > b, .humidity > b {
+  color: gold;
+}
+
+#chartWrapper {
+  height: 500px !important;
+}

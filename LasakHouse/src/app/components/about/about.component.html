@@ -1,0 +1,25 @@
+<mat-card class="example-card">
+  <mat-card-header>
+    <mat-card-title>Informace o aplikaci</mat-card-title>
+    <mat-card-subtitle
+      >Developed by
+      <a href="http://www.lasaks.eu" target="_blank" class="custom-text-link"
+        >Adam Lasak</a
+      ></mat-card-subtitle
+    >
+  </mat-card-header>
+  <mat-card-content>
+    <p>
+      <br>
+      Aplikace komunikuje s Firebase RealTime Database od firmy Google. Odečtené
+      hodnoty se analogově přenášejí do čipu ATmega328, který je převede do JSON
+      datového formátu a následně se po sériové lince (115200 baudů) pošle do
+      čipu ESP8266. ESP čip se mezitím připojí na lokální Wi-Fi síť. Poté se připojí na
+      Firebase RealTime databázi a pomocí autentifikace
+      získá UUID, pod kterým později zapisuje data do databáze (jednotliví klienti jsou
+      pak indentifikovatelní podle UUID - tudíž je lze rozeznat).
+      ESP8266 odposlouchává na sériové lince a přenesený JSON formát si zformátuje
+      a následně pošle přímo do Firebase (UUID už má mezitím získané).
+    </p>
+  </mat-card-content>
+</mat-card>

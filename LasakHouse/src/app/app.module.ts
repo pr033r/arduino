@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -16,7 +15,9 @@ import {MatCardModule} from '@angular/material/card';
 import {MatMenuModule} from '@angular/material/menu';
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireDatabaseModule} from "@angular/fire/compat/database";
-import { LineChartComponent } from './components/line-chart/line-chart.component';
+import { TempHumChartComponent } from './components/temp-hum-chart/temp-hum-chart.component';
+import { AboutComponent } from './components/about/about.component';
+import { HomeServicesComponent } from './components/home-services/home-services.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBCNbJbdqDnV6pFd3DkNHEYMWmVbjs43PU",
@@ -33,7 +34,9 @@ const firebaseConfig = {
   declarations: [
     AppComponent,
     DashboardComponent,
-    LineChartComponent,
+    TempHumChartComponent,
+    AboutComponent,
+    HomeServicesComponent,
   ],
   imports: [
     BrowserModule,

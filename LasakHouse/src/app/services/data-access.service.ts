@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {AngularFireDatabase, AngularFireList, AngularFireObject} from "@angular/fire/compat/database";
-import {ReadingsDataInterface} from "./readings-data.interface";
+import {ReadingsDataInterface} from "../models/readings-data.interface";
 
 @Injectable({
   providedIn: 'root'
